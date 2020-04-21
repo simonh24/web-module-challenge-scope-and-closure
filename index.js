@@ -27,18 +27,18 @@ function processFirstItem(stringList, callback) {
  * Study the code for counter1 and counter2. Answer the questions below.
  * 
  * 1. What is the difference between counter1 and counter2?
- * 
+ *  counter1 is a usage of closure, when counterMaker is called more than once, it will add more than once. counter2 will only return 1.
  * 2. Which of the two uses a closure? How can you tell?
- * 
+ *  counter1 because it returns a function.
  * 3. In what scenario would the counter1 code be preferable? In what scenario would counter2 be better? 
- *
+ *  counter1 is better to count how many times it is called and counter2 would be better to have 1 more than the variable
 */
 
 // counter1 code
 function counterMaker() {
   let count = 0;
   return function counter() {
-    count++;
+    return count++;
   }
 }
 
@@ -56,11 +56,11 @@ function counter2() {
 
 Write a function called `inning` that generates a random number of points that a team scored in an inning. This should be a whole number between 0 and 2. */
 
-function inning(/*Code Here*/){
-
-    /*Code Here*/
-
+function inning(){
+  return Math.floor(Math.random() * 3);
 }
+
+console.log(inning());
 
 /* Task 3: finalScore()
 
@@ -76,11 +76,20 @@ finalScore(inning, 9) might return:
 
 */ 
 
-function finalScore(/*code Here*/){
-
-  /*Code Here*/
-
+function finalScore(cb, numInnings){
+  let homeCount = 0;
+  let awayCount = 0;
+  for (let i = 0; i < numInnings; i++) {
+    homeCount += cb();
+    awayCount += cb();
+  }
+  return {
+    Home: homeCount,
+    Away: awayCount,
+  }
 }
+
+console.log(finalScore(inning, 9));
 
 /* Task 4: 
 
@@ -104,8 +113,25 @@ and returns the score at each pont in the game, like so:
 
 Final Score: awayTeam - homeTeam */
 
-function scoreboard(/* CODE HERE */) {
-  /* CODE HERE */
+function getInningScore(cb) {
+  let homeCount = 0;
+  let awayCount = 0;
+  let inn = 0;
+  return function currentScore() {
+    homeCount += cb();
+    awayCount += cb();
+    inn++;
+    return `Inning ${inn}: ${awayCount} - ${homeCount}`;
+  }
 }
 
+function scoreboard(cbOne, cbTwo, numInnings) {
+  let out = [];
+  for (let i = 0; i < numInnings; i++) {
+    const iter = cbOne(cbTwo);
+    out.push(iter);
+  }
+  return out;
+}
 
+console.log(scoreboard(getInningScore(inning), inning(), 9));
